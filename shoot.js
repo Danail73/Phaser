@@ -24,10 +24,7 @@ let enter;
 let shot;
 let xSpeed=0;
 let ySpeed=0;
-let trumpXSpeed=1;
-let trumpYSpeed=1;
 const ACCEL=8;
-let trumpAccel=4;
 let accuracy=50;
 let score=0;
 let scoreText="";
@@ -35,6 +32,11 @@ let timerText="";
 let timer=0;
 let interval;
 let gameover=false;
+let a = 0;
+let r = 200;
+let x0 = 400;
+let y0=300;
+
 
 function preload(){
     this.load.image('background', 'assets/background.jpg');
@@ -43,9 +45,10 @@ function preload(){
     this.load.audio('backgroundMusic', 'assets/backgroundmusic.mp3');
     this.load.audio('shoot', 'assets/shoot.mp3');
     this.load.audio('hitSound', 'assets/shot.mp3');
-};
+    this.load.image('pr', 'assets/paradise.jpg')
+}
 function create(){
-    this.add.image(400,300,'background');
+    bk = this.add.image(400,300,'background');
     scoreText=this.add.text(250,16, 'score: 0',{ fontSize:'32px', fill:'#000' });
     timerText=this.add.text(600,16, 'timer: 0',{ fontSize:'32px', fill:'#000' });
     
@@ -72,53 +75,31 @@ function create(){
         timerText.setText('timer: '+ timer);
         if(timer>60){
             gameover=true;
-            endGame();
+            
         }
     }, 1000);
-};
+}
+function gameOver(){
+    interval=clearInterval();
+    bk.destroy();
+    trump.destroy();
+    player.destroy();
+}
 function update(){
     if(gameover){
+        gameOver();
+        a = this.add.image(400,300,'background');
+        end = this.add.text(220, 200, 'GAME OVER',{ fontSize:'64px', fill:'#000' } );
+        score1 = this.add.text(150, 290, 'Final Score: ' + score,{ fontSize:'60px', fill:'#000' });
+        game.destroy();
         return;
     }
 
-    //TRump
-    if(trump.x>=750){
-        trump.x=749;
-        trumpXSpeed= (-1)*trumpXSpeed;
-        trump.setVelocityX(trumpXSpeed);
-    }
-    else{
-        trump.x=trump.x+trumpXSpeed;
-    }
+    a+=0.06;
+    trump.x = x0+ r*Math.cos(a);
+    trump.y=y0+ r*Math.sin(a);
 
-    if(trump.x<=50){
-        trump.x=51;
-        trumpXSpeed= (-1)*trumpXSpeed;
-        trump.setVelocityX(trumpXSpeed);
-    }
-    else{
-        trump.x=trump.x+trumpXSpeed;
-    }
-
-    if(trump.y>=550){
-        trump.y=549;
-        trumpYSpeed= (-1)*trumpYSpeed;
-        trump.setVelocityY(trumpYSpeed);
-    }
-    else{
-        trump.y=trump.y+trumpYSpeed;
-    }
-
-    if(trump.y<=50){
-        trump.y=51;
-        trumpYSpeed= (-1)*trumpYSpeed;
-        trump.setVelocityY(trumpYSpeed);
-    }
-    else{
-        trump.y=trump.y+trumpYSpeed;
-    }
-
-
+    
     //Player
     if(cursors.left.isDown){
         xSpeed=xSpeed-ACCEL;
@@ -174,4 +155,4 @@ function update(){
         timerText.setText('');
         clearInterval(interval);
     }
-};
+}
